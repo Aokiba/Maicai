@@ -1,0 +1,10 @@
+station_id = ''
+
+cookie = 'DDXQSESSID='
+city_number = '0101'
+longitude = '121.486771'
+latitude = '31.104577'
+address_id = '31.188311'
+uid = ''
+api_version = '9.49.2'
+app_version = '2.82.0'
