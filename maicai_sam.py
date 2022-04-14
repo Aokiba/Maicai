@@ -29,8 +29,7 @@ def get_capacity():
     }
     r = requests.post(url, data=json.dumps(data), headers=headers)
     txt = r.text
-    abc = json.loads(txt).get("data")
-    print(abc)
+    return json.loads(txt).get("data")
 
 
 def getSettleInfo(d):
@@ -84,6 +83,68 @@ def queryUserCart():
 
 
 if __name__ == '__main__':
-    # get_capacity()
+    a = get_capacity()
+    b = a["capcityResponseList"]
+
+    c = b[0]
+    d = c["list"]
+    e = d[0]
+    startRealTime = e["startRealTime"]
+    endRealTime = e["endRealTime"]
     cart = queryUserCart()
-    print(cart)
+    floorInfoList = cart["floorInfoList"]
+    deliveryAddress = cart["deliveryAddress"]
+    # address_id = deliveryAddress["addressId"]
+    good_list = []
+    store_id = 0
+    store_type = 0
+    for i in floorInfoList:
+        a = i["normalGoodsList"]
+        for b in a:
+            good_item = {'isSelected': True, 'quantity': 1, 'spuId': b["spuId"], 'storeId': b["storeId"]}
+            store_id = b["storeId"]
+            store_type = b["storeType"]
+            good_list.append(good_item)
+    map = {
+        "tradeType": "APP",
+        "purchaserId": "",
+        "payType": 0,
+        "currency": "CNY",
+        "channel": "wechat",
+        "shortageId": 1,
+        "isSelfPickup": 0,
+        "orderType": 0,
+        "uid": sam_config.uid,
+        "appId": sam_config.app_id,
+        "addressId": "145615107",
+        "storeInfo": {
+            "storeId": "4805",
+            "storeType": "2",
+            "areaBlockId": "301239028865439254"
+        },
+        "invoiceInfo": {},
+        "cartDeliveryType": 2,
+        "floorId": 1,
+        "amount": "162400",
+        "purchaserName": "",
+        "settleDeliveryInfo": {
+            "expectArrivalTime": startRealTime,
+            "expectArrivalEndTime": endRealTime,
+            "deliveryType": 0
+        },
+    }
+    headers = {
+        'Host': 'api-sams.walmartmobile.cn',
+        'Connection': 'keep-alive',
+        'Accept': '*/*',
+        'Content-Type': 'application/json;charset=UTF-8',
+        'latitude': sam_config.latitude,
+        'device-type': 'ios',
+        'auth-token': sam_config.token,
+        'app-version': '5.0.47.0',
+        'device-os-version': '15.1'
+    }
+    url = 'https://api-sams.walmartmobile.cn/api/v1/sams/trade/settlement/commitPay'
+    r = requests.post(url, data=json.dumps(d), headers=headers)
+    txt = r.text
+    abc = json.loads(txt).get("data")
